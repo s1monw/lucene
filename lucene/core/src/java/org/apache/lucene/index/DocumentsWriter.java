@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -242,7 +241,8 @@ final class DocumentsWriter implements Closeable, Accountable {
       infoStream.message("DW", "startFlushOneDWPT");
     }
     if (maybeFlush() == false) {
-      DocumentsWriterPerThread documentsWriterPerThread = flushControl.checkoutLargestNonPendingWriter();
+      DocumentsWriterPerThread documentsWriterPerThread =
+          flushControl.checkoutLargestNonPendingWriter();
       if (documentsWriterPerThread != null) {
         doFlush(documentsWriterPerThread);
         return true;
@@ -487,7 +487,9 @@ final class DocumentsWriter implements Closeable, Accountable {
           assert assertTicketQueueModification(flushingDWPT.deleteQueue);
           final DocumentsWriterPerThread dwpt = flushingDWPT;
           // Each flush is assigned a ticket in the order they acquire the ticketQueue lock
-          ticket = ticketQueue.addTicket(() -> new DocumentsWriterFlushQueue.FlushTicket(dwpt.prepareFlush(), true));
+          ticket =
+              ticketQueue.addTicket(
+                  () -> new DocumentsWriterFlushQueue.FlushTicket(dwpt.prepareFlush(), true));
           final int flushingDocsInRam = flushingDWPT.getNumDocsInRAM();
           boolean dwptSuccess = false;
           try {
@@ -665,7 +667,8 @@ final class DocumentsWriter implements Closeable, Accountable {
     }
   }
 
-  private DocumentsWriterFlushQueue.FlushTicket maybeFreezeGlobalBuffer(DocumentsWriterDeleteQueue deleteQueue) {
+  private DocumentsWriterFlushQueue.FlushTicket maybeFreezeGlobalBuffer(
+      DocumentsWriterDeleteQueue deleteQueue) {
     FrozenBufferedUpdates frozenBufferedUpdates = deleteQueue.maybeFreezeGlobalBuffer();
     if (frozenBufferedUpdates != null) {
       // no need to publish anything if we don't have any frozen updates

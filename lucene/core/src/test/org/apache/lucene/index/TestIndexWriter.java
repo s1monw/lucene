@@ -3150,14 +3150,16 @@ public class TestIndexWriter extends LuceneTestCase {
     try (Directory dir = newDirectory()) {
       IndexWriterConfig indexWriterConfig = new IndexWriterConfig();
       AtomicBoolean flushDeletes = new AtomicBoolean();
-      indexWriterConfig.setFlushPolicy(new FlushPolicy() {
-        @Override
-        public void onChange(DocumentsWriterFlushControl control, DocumentsWriterPerThread perThread) {
-          if (flushDeletes.get()) {
-            control.setApplyAllDeletes();
-          }
-        }
-      });
+      indexWriterConfig.setFlushPolicy(
+          new FlushPolicy() {
+            @Override
+            public void onChange(
+                DocumentsWriterFlushControl control, DocumentsWriterPerThread perThread) {
+              if (flushDeletes.get()) {
+                control.setApplyAllDeletes();
+              }
+            }
+          });
       try (IndexWriter w = new IndexWriter(dir, indexWriterConfig)) {
         assertEquals(0, w.docWriter.flushControl.getDeleteBytesUsed());
         w.deleteDocuments(new Term("foo", "bar"));

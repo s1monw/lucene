@@ -22,7 +22,6 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
-
 import org.apache.lucene.index.DocumentsWriterPerThread.FlushedSegment;
 import org.apache.lucene.util.IOConsumer;
 
@@ -35,7 +34,6 @@ final class DocumentsWriterFlushQueue {
   // constructed ie. queue.size would not reflect it.
   private final AtomicInteger ticketCount = new AtomicInteger();
   private final ReentrantLock purgeLock = new ReentrantLock();
-
 
   synchronized FlushTicket addTicket(Supplier<FlushTicket> ticketSupplier) throws IOException {
     // first inc the ticket count - freeze opens a window for #anyChanges to fail
